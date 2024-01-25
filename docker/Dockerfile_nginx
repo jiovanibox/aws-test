@@ -1,0 +1,2 @@
+FROM nginx:latest
+# FROM public.ecr.aws/z9l7k5x5/test-ecs:docker_nginx-test

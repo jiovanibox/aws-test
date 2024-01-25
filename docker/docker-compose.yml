@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+
+  nginx-test-2:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./Dockerfile_nginx
+    ports:
+      - "80:80"
+    volumes:
+      #- ./default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./html:/usr/share/nginx/html
+    environment:
+      ENV_A: aaa
+      ENV_B: bbb
+  app-test-2:
+    container_name: python_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile_python

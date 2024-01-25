@@ -1,0 +1,70 @@
+[
+    {
+        "name": "${ecs_container_name}",
+        "cpu": ${cpu},
+        "memory": ${memory},
+        "image": "${web_img}",
+        "essentials": true,
+        "pseudoTerminal": true,
+        "healthCheck": {
+            "command": [
+            "CMD-SHELL",
+            "echo hello"
+            ],
+            "interval": 5,
+            "timeout": 2,
+            "retries": 3
+        },
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+            "awslogs-region": "ap-northeast-1",
+            "awslogs-stream-prefix": "web",
+            "awslogs-group": "${cwlogs_web}"
+            }
+        },
+        "portMappings": [
+            {
+            "protocol": "tcp",
+            "containerPort": 80
+            }
+        ]
+        },
+
+
+
+        {
+        "name": "${ecs_container_name}-php-fpm",
+        "cpu": ${cpu},
+        "memory": ${memory},
+        "image": "${app_img}",
+        "essentials": true,
+        "pseudoTerminal": true,
+        "dependsOn": [
+            {
+            "containerName": "${ecs_container_name}",
+            "condition": "HEALTHY"
+            }
+        ],
+        "environment": [
+            {
+            "name": "APPMESH_VIRTUAL_NODE_NAME",
+            "value": "mesh/meshName/virtualNode/virtualNodeName"
+            },
+            {
+            "name": "ENVOY_LOG_LEVEL",
+            "value": "info"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+            "awslogs-region": "ap-northeast-1",
+            "awslogs-stream-prefix": "app",
+            "awslogs-group": "${cwlogs_app}"
+            }
+        }
+    }
+]
+
+
